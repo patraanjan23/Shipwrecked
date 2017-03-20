@@ -1,0 +1,11 @@
+bin
+obj
+Shipwrecked.cbp
+Shipwrecked.depend
+Shipwrecked.layout
+*.dll
+Shipwrecked_linux/bin
+Shipwrecked_linux/obj
+assets/misc
+*.save
+*.xml

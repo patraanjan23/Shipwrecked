@@ -1,0 +1,41 @@
+# depslib dependency file v1.0
+1489837697 source:/media/natsu/Entertainment/SDL2/Shipwrecked/shipwrecked.c
+	<stdio.h>
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	"sdl_functions.h"
+	"game_functions.h"
+
+1489837695 /media/natsu/Entertainment/SDL2/Shipwrecked/sdl_functions.h
+	<SDL2/SDL.h>
+	<stdio.h>
+	<stdlib.h>
+	"game_functions.h"
+
+1489837692 /media/natsu/Entertainment/SDL2/Shipwrecked/game_functions.h
+	<SDL2/SDL.h>
+
+1489837696 source:/media/natsu/Entertainment/SDL2/Shipwrecked/sdl_functions.c
+	"sdl_functions.h"
+	"game_functions.h"
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	<stdio.h>
+	<stdlib.h>
+
+1489837694 source:/media/natsu/Entertainment/SDL2/Shipwrecked/game_functions.c
+	"game_functions.h"
+	"sdl_functions.h"
+	<stdio.h>
+	<string.h>
+	<SDL2/SDL.h>
+	<SDL2/SDL_image.h>
+	<SDL2/SDL_thread.h>
+
+1489839313 source:/media/natsu/Entertainment/SDL2/Shipwrecked/physics.c
+	<stdio.h>
+	<math.h>
+	"physics.h"
+
+1489843247 /media/natsu/Entertainment/SDL2/Shipwrecked/physics.h
+

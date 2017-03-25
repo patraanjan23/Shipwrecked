@@ -84,22 +84,22 @@ void gameLoop(SDL_Renderer *ren)
                     break;
                 case SDLK_RIGHT:
                     walking = true;
-                    p1_pos.i += 10;
+                    player.x += 10;
                     if (DEBUG) printf("t = %d\n", t);
                     break;
                 case SDLK_LEFT:
                     walking = true;
-                    p1_pos.i -= 10;
+                    player.x -= 10;
                     if (DEBUG) printf("t = %d\n", t);
                     break;
                 case SDLK_DOWN:
                     walking = true;
-                    p1_pos.j += 10;
+                    player.y += 10;
                     if (DEBUG) printf("t = %d\n", t);
                     break;
                 case SDLK_UP:
                     walking = true;
-                    p1_pos.j -= 10;
+                    player.y -= 10;
                     if (DEBUG) printf("t = %d\n", t);
                     break;
                 case SDLK_w:
@@ -122,8 +122,6 @@ void gameLoop(SDL_Renderer *ren)
                     break;
                 }
             }
-            player.x = p1_pos.i;
-            player.y = p1_pos.j;
         }
         if (player.x + player.w > 1024)
         {

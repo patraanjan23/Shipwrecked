@@ -25,7 +25,7 @@ void gameLoop(SDL_Renderer *ren)
     FRAME *playerSprite = loadSprite(16, addString(TEXTURE_TEST, ".txt"));
     SDL_Texture *P1_SHEET = loadImage(addString(TEXTURE_TEST, ".png"), ren);
 
-    POS_V p1_pos = newVector(0, 600);
+    POS_V p1_pos = newVector(0, 0);
 
 //    POS_V currentPos = p1_pos;
 //    DSP_V currentDsp = zeroVector();

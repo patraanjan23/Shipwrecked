@@ -9,3 +9,6 @@ Shipwrecked_linux/obj
 assets/misc
 *.save
 *.xml
+*.depend
+*.layout
+

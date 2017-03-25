@@ -4,8 +4,7 @@ Shipwrecked.cbp
 Shipwrecked.depend
 Shipwrecked.layout
 *.dll
-Shipwrecked_linux/bin
-Shipwrecked_linux/obj
+Shipwrecked_linux
 assets/misc
 *.save
 *.xml

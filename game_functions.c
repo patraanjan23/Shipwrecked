@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
@@ -14,12 +13,29 @@
 char TEXTURE_TEST[] = "../assets/platformerGraphicsDeluxe/Player/p3_spritesheet";
 char TEXTURE_TEST2[] = "../assets/platformerGraphicsDeluxe/Player/p1_spritesheet";
 
+int threadReturnValue = 0;
+
 void gameLoop(SDL_Renderer *ren)
 {
     if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
     {
         logSDLError("IMG_Init");
         SDL_Quit();
+    }
+
+    if (DEBUG)
+    {
+        SDL_Thread *thread = SDL_CreateThread(testThread, "Test Thread SDL 2 Shipwrecked", (void *)NULL);
+
+        if (thread == NULL)
+        {
+            printf("thread creation failed: %s\n", SDL_GetError());
+        }
+        else
+        {
+            SDL_WaitThread(thread, &threadReturnValue);
+            printf("Thread executed successfully and returned value : %d\n", threadReturnValue);
+        }
     }
 
     FRAME *playerSprite = loadSprite(16, addString(TEXTURE_TEST, ".txt"));
@@ -52,11 +68,21 @@ void gameLoop(SDL_Renderer *ren)
     p1.pcFrames = playerSprite;
     p1.pcImg = P1_SHEET;
     p1.pcLoc = &player;
+    p1.walk = false;
 
     PLAYER p2;
     p2.pcFrames = player2Sprite;
     p2.pcImg = P2_SHEET;
     p2.pcLoc = &player2;
+    p2.walk = false;
+
+//    SDL_Rect **playersArray = malloc(sizeof(SDL_Rect *) * 2);
+//    playersArray[0] = &player2;
+//    playersArray[1] = &player;
+
+    PLAYER **players = malloc(sizeof(PLAYER) * 2);
+    players[0] = &p1;
+    players[1] = &p2;
 
 
     int t = 5;
@@ -65,99 +91,16 @@ void gameLoop(SDL_Renderer *ren)
     SDL_Event event;
     while (!quit)
     {
-        bool walking = false;
-        bool walking2 = false;
+        players[0]->walk = false;
+        players[1]->walk = false;
 
-        while (SDL_PollEvent(&event))
-        {
-            if (event.type == SDL_QUIT)
-            {
-                quit = true;
-                break;
-            }
-            if (event.type == SDL_KEYDOWN)
-            {
-                switch(event.key.keysym.sym)
-                {
-                case SDLK_ESCAPE:
-                    quit = true;
-                    break;
-                case SDLK_RIGHT:
-                    walking = true;
-                    p1_pos.i += 10;
-                    if (DEBUG) printf("t = %d\n", t);
-                    break;
-                case SDLK_LEFT:
-                    walking = true;
-                    p1_pos.i -= 10;
-                    if (DEBUG) printf("t = %d\n", t);
-                    break;
-                case SDLK_DOWN:
-                    walking = true;
-                    p1_pos.j += 10;
-                    if (DEBUG) printf("t = %d\n", t);
-                    break;
-                case SDLK_UP:
-                    walking = true;
-                    p1_pos.j -= 10;
-                    if (DEBUG) printf("t = %d\n", t);
-                    break;
-                case SDLK_w:
-                    walking2 = true;
-                    player2.y -= 10;
-                    break;
-                case SDLK_s:
-                    walking2 = true;
-                    player2.y += 10;
-                    break;
-                case SDLK_a:
-                    walking2 = true;
-                    player2.x -= 10;
-                    break;
-                case SDLK_d:
-                    walking2 = true;
-                    player2.x += 10;
-                    break;
-                default:
-                    break;
-                }
-            }
-            player.x = p1_pos.i;
-            player.y = p1_pos.j;
-        }
-        if (player.x + player.w > 1024)
-        {
-            player.x = 1024 - player.w;
-        }
-        if (player.x < 0)
-        {
-            player.x = 0;
-        }
-        if (player.y + player.h > 600)
-        {
-            player.y = 600 - player.h;
-        }
-        if (player.y < 0)
-        {
-            player.y = 0;
-        }
+        SDL_Thread *thread2 = SDL_CreateThread(testThread2, "Test Thread 2", &p2);
 
-        if (player2.x + player2.w > 1024)
-        {
-            player2.x = 1024 - player2.w;
-        }
-        if (player2.x < 0)
-        {
-            player2.x = 0;
-        }
-        if (player2.y + player2.h > 600)
-        {
-            player2.y = 600 - player2.h;
-        }
-        if (player2.y < 0)
-        {
-            player2.y = 0;
-        }
+        eventLoop(&event, &quit, players);
+        playerBound(players);
+
+
+
         SDL_SetRenderDrawColor(ren, 128, 128, 128, 255);
         SDL_RenderClear(ren);
 //        renderFrame(ren, P1_SHEET, playerSprite, t, &player);
@@ -165,24 +108,162 @@ void gameLoop(SDL_Renderer *ren)
 //        renderFrame(ren, P2_SHEET, player2Sprite, u, &player2);
         renderPlayer(ren, &p2, u);
 
-        if (walking)
+        if (p1.walk)
         {
             if (t++ == 15) t = 5;
         }
-        if (walking2)
+        if (p2.walk)
         {
             if (u++ == 15) u = 5;
         }
 
         SDL_RenderPresent(ren);
+        SDL_WaitThread(thread2, &threadReturnValue);
         SDL_Delay(33);
     }
     free(playerSprite);
     free(player2Sprite);
+//    free(playersArray);
+    free(players);
+}
+
+// THEAD 1 : Does a simple counting from 0 - 9 and returns 10 in the thread value
+int testThread(void *data)
+{
+    int cnt = 0;
+
+    while (cnt < 10)
+    {
+        printf("count : %d\n", cnt);
+        cnt++;
+    }
+
+    return cnt;
+}
+
+// THREAD 2 : Runs the auto movement of P2
+int testThread2(void *data)
+{
+    PLAYER *p = (PLAYER *)data;
+
+    if (p->pcLoc->x == (1024 - p->pcLoc->w))
+    {
+        p->pcLoc->x = 0;
+    }
+    if (p->pcLoc->y == (600 - p->pcLoc->h))
+    {
+        p->pcLoc->y = 0;
+    }
+
+    p->pcLoc->x += 1;
+    p->pcLoc->y += 1;
+    p->walk = true;
+
+    return 0;
+}
+
+
+/*
+ * Event Handling : Key input
+ */
+void eventLoop(SDL_Event *event, bool *quit, PLAYER **players)
+{
+
+
+    while (SDL_PollEvent(event))
+    {
+        if (event->type == SDL_QUIT)
+        {
+            *quit = true;
+            break;
+        }
+        if (event->type == SDL_KEYDOWN)
+        {
+            switch(event->key.keysym.sym)
+            {
+            case SDLK_ESCAPE:
+                *quit = true;
+                break;
+            case SDLK_RIGHT:
+                players[0]->pcLoc->x += 10;
+                players[0]->walk = true;
+                break;
+            case SDLK_LEFT:
+                players[0]->pcLoc->x -= 10;
+                players[0]->walk = true;
+                break;
+            case SDLK_DOWN:
+                players[0]->pcLoc->y += 10;
+                players[0]->walk = true;
+                break;
+            case SDLK_UP:
+                players[0]->pcLoc->y -= 10;
+                players[0]->walk = true;
+                break;
+            case SDLK_w:
+                players[1]->pcLoc->y -= 10;
+                players[1]->walk = true;
+                break;
+            case SDLK_s:
+                players[1]->pcLoc->y += 10;
+                players[1]->walk = true;
+                break;
+            case SDLK_a:
+                players[1]->pcLoc->x -= 10;
+                players[1]->walk = true;
+                break;
+            case SDLK_d:
+                players[1]->pcLoc->x += 10;
+                players[1]->walk = true;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+}
+
+/*
+ * Bounds player to the screen
+ */
+void playerBound(PLAYER **players)
+{
+    if (players[0]->pcLoc->x + players[0]->pcLoc->w > 1024)
+    {
+        players[0]->pcLoc->x = 1024 - players[0]->pcLoc->w;
+    }
+    if (players[0]->pcLoc->x < 0)
+    {
+        players[0]->pcLoc->x = 0;
+    }
+    if (players[0]->pcLoc->y + players[0]->pcLoc->h > 600)
+    {
+        players[0]->pcLoc->y = 600 - players[0]->pcLoc->h;
+    }
+    if (players[0]->pcLoc->y < 0)
+    {
+        players[0]->pcLoc->y = 0;
+    }
+
+    if (players[1]->pcLoc->x + players[1]->pcLoc->w > 1024)
+    {
+        players[1]->pcLoc->x = 1024 - players[1]->pcLoc->w;
+    }
+    if (players[1]->pcLoc->x < 0)
+    {
+        players[1]->pcLoc->x = 0;
+    }
+    if (players[1]->pcLoc->y + players[1]->pcLoc->h > 600)
+    {
+        players[1]->pcLoc->y = 600 - players[1]->pcLoc->h;
+    }
+    if (players[1]->pcLoc->y < 0)
+    {
+        players[1]->pcLoc->y = 0;
+    }
 }
 
 // Adds two strings and returns a string
-
 char *addString(char *string_A, char *string_B)
 {
     char *tmp = malloc(sizeof(char*) * (strlen(string_A) + strlen(string_B) + 1));
@@ -194,7 +275,6 @@ char *addString(char *string_A, char *string_B)
 /*
  *  Loads sprite metadata into array
  */
-
 FRAME *loadSprite(int f_count, char *metadata)
 {
     if (DEBUG)

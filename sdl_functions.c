@@ -1,4 +1,3 @@
-
 #include "sdl_functions.h"
 #include "game_functions.h"
 #include <SDL2/SDL.h>

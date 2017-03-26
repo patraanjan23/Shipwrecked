@@ -14,12 +14,60 @@
 char TEXTURE_TEST[] = "../assets/platformerGraphicsDeluxe/Player/p3_spritesheet";
 char TEXTURE_TEST2[] = "../assets/platformerGraphicsDeluxe/Player/p1_spritesheet";
 
+int testThread(void *data)
+{
+    int cnt = 0;
+
+    while (cnt < 10)
+    {
+        printf("count : %d\n", cnt);
+        cnt++;
+    }
+
+    return cnt;
+}
+
+int threadReturnValue = 0;
+
+int testThread2(void *data)
+{
+    SDL_Rect *pos = (SDL_Rect *)data;
+
+    if (pos->x == (1024 - pos->w))
+    {
+        pos->x = 0;
+    }
+    if (pos->y == (600 - pos->h))
+    {
+        pos->y = 0;
+    }
+
+    pos->x += 2;
+    pos->y += 3;
+
+    return 0;
+}
+
+
+
 void gameLoop(SDL_Renderer *ren)
 {
     if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
     {
         logSDLError("IMG_Init");
         SDL_Quit();
+    }
+
+    SDL_Thread *thread = SDL_CreateThread(testThread, "Test Thread SDL 2 Shipwrecked", (void *)NULL);
+
+    if (thread == NULL)
+    {
+        printf("thread creation failed: %s\n", SDL_GetError());
+    }
+    else
+    {
+        SDL_WaitThread(thread, &threadReturnValue);
+        printf("Thread executed successfully and returned value : %d\n", threadReturnValue);
     }
 
     FRAME *playerSprite = loadSprite(16, addString(TEXTURE_TEST, ".txt"));
@@ -67,6 +115,8 @@ void gameLoop(SDL_Renderer *ren)
     {
         bool walking = false;
         bool walking2 = false;
+
+        SDL_Thread *thread2 = SDL_CreateThread(testThread2, "Test Thread 2", &player2);
 
         while (SDL_PollEvent(&event))
         {
@@ -173,6 +223,7 @@ void gameLoop(SDL_Renderer *ren)
         }
 
         SDL_RenderPresent(ren);
+        SDL_WaitThread(thread2, &threadReturnValue);
         SDL_Delay(33);
     }
     free(playerSprite);

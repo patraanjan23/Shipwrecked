@@ -7,8 +7,7 @@ HEADERS = \
    $$PWD/game_functions.h \
    $$PWD/physics.h \
    $$PWD/players.h \
-   $$PWD/sdl_functions.h \
-    test.h
+   $$PWD/sdl_functions.h
 
 SOURCES = \
    $$PWD/game_functions.c \

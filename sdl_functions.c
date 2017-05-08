@@ -1,10 +1,9 @@
-#include "sdl_functions.h"
-#include "game_functions.h"
-#include "players.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "sdl_functions.h"
 
 /*
 *	A function that prints formatted Error msg with SDL_GetError.

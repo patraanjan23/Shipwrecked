@@ -4,11 +4,11 @@
 
 #define DEBUG_PLAYER 0
 
-PLAYER_C *new_player(char *player_name, char *player_spritesheet, char *player_metadata, float player_pos_x, float player_pos_y, float player_size_w, float player_size_h, int player_frames, SDL_Renderer *ren)
+PLAYER_C *new_player(char *player_name, char *player_spritesheet, char *player_metadata, float player_pos_x, float player_pos_y, float player_dim_w, float player_dim_h, float player_dim_scale, int player_frames, SDL_Renderer *ren)
 {
 
   // TODO (natsu#1#): Add player_name length handling
-  PLAYER_C *p = malloc(sizeof(char) * 20 + sizeof(POS_V) + sizeof(SDL_Texture *) + sizeof(FRAME *) + sizeof(MOV));
+  PLAYER_C *p = malloc(sizeof(char) * 20 + sizeof(POS_V) + sizeof(DIM_V) + sizeof(float) + sizeof(SDL_Texture *) + sizeof(FRAME *) + sizeof(MOV));
 
   SDL_Texture *tmp_tex = loadImage(player_spritesheet, ren);
 //  POS_V tmp_pos = newVector(player_pos_x, player_pos_y);
@@ -18,11 +18,14 @@ PLAYER_C *new_player(char *player_name, char *player_spritesheet, char *player_m
   p->name = player_name;
   p->pos.i = player_pos_x;
   p->pos.j = player_pos_y;
+  p->dim.i = player_dim_w;
+  p->dim.j = player_dim_h;
+  p->dim_scale = player_dim_scale;
   p->pTexture = tmp_tex;
   p->frames = tmp_sprite;
   p->movement = &tmp_mov;
 
-  printf("Successfully created  player : %s", player_name);
+  if (DEBUG_PLAYER) printf("Successfully created  player : %s\n", player_name);
   return p;
 
   //TODO (natsu#9#): Complete the new player structure using vectors
@@ -42,8 +45,19 @@ void renderPlayerC(PLAYER_C *p, SDL_Renderer *ren)
 
   dest.x = p->pos.i;
   dest.y = p->pos.j;
-  dest.w = p->frames[f].w;
-  dest.h = p->frames[f].h;
+
+  if (p->dim_scale == -1 || p->dim_scale < 0)
+  {
+    dest.w = p->dim.i;
+    dest.h = p->dim.j;
+  }
+  else
+  {
+    dest.w = p->frames[f].w * p->dim_scale;
+    dest.h = p->frames[f].h * p->dim_scale;
+
+    p->dim = newVector(dest.w, dest.h);
+  }
 
   SDL_RenderCopy(ren, p->pTexture, &clip, &dest);
 }

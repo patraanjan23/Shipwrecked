@@ -26,12 +26,14 @@ typedef struct _player
 {
   char        *name;
   POS_V        pos;
+  DIM_V        dim;
+  float        dim_scale;
   SDL_Texture *pTexture;
   FRAME       *frames;
   MOV         *movement;
 } PLAYER_C;
 
-PLAYER_C *new_player(char *player_name, char *player_spritesheet, char *player_metadata, float player_pos_x, float player_pos_y, float player_size_w, float player_size_h, int player_frames, SDL_Renderer *ren);
+PLAYER_C *new_player(char *player_name, char *player_spritesheet, char *player_metadata, float player_pos_x, float player_pos_y, float player_dim_w, float player_dim_h, float player_dim_scale, int player_frames, SDL_Renderer *ren);
 void renderPlayerC(PLAYER_C *p, SDL_Renderer *ren);
 void walkPlayerC(PLAYER_C *p, int direction);
 void eventLoopC(SDL_Event *event, bool *quit, PLAYER_C *test_p);

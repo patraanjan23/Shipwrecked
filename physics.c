@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+
 #include "physics.h"
 
 VECTOR2D newVector(float x, float y)

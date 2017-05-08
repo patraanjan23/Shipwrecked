@@ -17,6 +17,7 @@ typedef struct _world
 } WORLD;
 
 typedef VECTOR2D POS_V;
+typedef VECTOR2D DIM_V;
 typedef VECTOR2D DSP_V;
 typedef VECTOR2D VEL_V;
 typedef VECTOR2D ACC_V;

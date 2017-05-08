@@ -22,5 +22,6 @@ int main(int argc, char *argv[])
   SDL_DestroyWindow(gameApp->win);
   SDL_Quit();
 
+  free(gameApp);
   return 0;
 }

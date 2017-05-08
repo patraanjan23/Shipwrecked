@@ -10,4 +10,4 @@ assets/misc
 *.xml
 *.depend
 *.layout
-
+*.user

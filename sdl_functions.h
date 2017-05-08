@@ -1,16 +1,19 @@
 #ifndef SDL_FUNCTIONS_H
 #define SDL_FUNCTIONS_H
 
+
 #include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #include "game_functions.h"
+#include "players.h"
 
 typedef struct _sdl_win_ren
 {
-    SDL_Window *win;
-    SDL_Renderer *ren;
+  SDL_Window *win;
+  SDL_Renderer *ren;
 } WIN_REN;
 
 void logSDLError(char *msg);
